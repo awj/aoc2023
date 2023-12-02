@@ -25,6 +25,26 @@ module Day2
       @red = vals.fetch("red", 0)
       @blue = vals.fetch("blue", 0)
     end
+
+    def |(other)
+      Showing.new(
+        "green" => [green, other.green].max,
+        "red" => [red, other.red].max,
+        "blue" => [blue, other.blue].max
+      )
+    end
+
+    def power
+      green * blue * red
+    end
+  end
+
+  def self.p2(input)
+    games = decode(input)
+
+    games.values.sum do |showings|
+      showings.reduce(&:|).power
+    end
   end
 
   def self.p1(input)
