@@ -29,7 +29,7 @@ module Day7
 
     # Define a mapping from the input card name to a numeric value such that
     # sorting by the numeric values reflects the strength of the cards.
-    CARD_MAP = %w[2 3 4 5 6 7 8 9 T J Q K A].each_with_index.to_h
+    CARD_MAP = %w[J 2 3 4 5 6 7 8 9 T Q K A].each_with_index.to_h
 
     attr_reader :cards, :bid, :kind, :table
 
@@ -70,6 +70,8 @@ module Day7
     def identify!
       @table = cards.tally
 
+      jokerify!
+
       three_of_one = table.values.any? { |v| v == 3 }
 
       @kind = case table.size
@@ -79,6 +81,21 @@ module Day7
               when 4 then ONE_PAIR
               when 5 then HIGH_CARD
               end
+    end
+
+    def jokerify!
+      joker_count = table.delete(CARD_MAP["J"]) { 0 }
+
+      return if joker_count.zero?
+
+      if joker_count == 5
+        table[CARD_MAP["A"]] = 5
+        return
+      end
+
+      target = table.each_pair.map(&:reverse).max
+
+      table[target.last] += joker_count
     end
   end
 end
