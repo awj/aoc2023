@@ -43,6 +43,44 @@ module Day6
     end.select { |distance| distance > max_distance }
   end
 
+  # The distance is a parabolic curve with respect to "charge time"
+  #
+  # Using:
+  #   d = distance
+  #   t = total time
+  #   x = charge time
+  #
+  # We can plug in the "current max distance" then solve for the roots of the
+  # parabolic equation to find the exact amount of charge time required to pass
+  # the distance.
+  #
+  # distance = (total time - charge time) * charge time
+  # d = (t - x) * x
+  # d = tx - x^2
+  # d = -x^2 + tx
+  # -d = x^2 - tx
+  # 0 = x^2 - tx + d
+  #
+  # We're now in the form of ax^2 + bx + c, so we can use standard parabolic
+  # roots to find the times where we cross over.
+  def self.real_fastest_solutions(problem)
+    time, distance = problem
+
+    start, finish = roots(time.to_f, distance.to_f)
+
+    first_winner = start.ceil
+    last_winner = finish.floor
+
+    last_winner - first_winner + 1
+  end
+
+  def self.roots(time, max_distance)
+    negative = (time - Math.sqrt((-time * -time) - (4 * 1 * max_distance))) / 2
+    positive = (time + Math.sqrt((-time * -time) - (4 * 1 * max_distance))) / 2
+
+    [negative, positive]
+  end
+
   # Because the distance travelled is a direct function of "charge time", we
   # know that the possible charge times form a simple distribution curve. So
   # there's a point on the curve where we cross from "not a winning distance" to
